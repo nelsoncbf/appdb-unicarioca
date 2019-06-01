@@ -1,0 +1,105 @@
+-- Excluir o BD
+DROP DATABASE CLINICA;
+
+-- Criar o BD
+CREATE DATABASE CLINICA;
+
+-- Modificando o banco de dados para uso
+USE CLINICA;
+
+-- Apagando as tabelas
+drop table if exists ambulatorios;
+drop table if exists medicos;
+drop table if exists pacientes;
+drop table if exists funcionarios;
+drop table if exists consultas;
+
+-- DDL
+CREATE TABLE Ambulatorios (
+	nroa integer PRIMARY KEY,
+	andar numeric(3) NOT NULL,
+	capacidade smallint
+);
+
+CREATE TABLE Medicos (
+	codm integer,
+	nome varchar(40) NOT NULL,
+	idade smallint NOT NULL,
+	especialidade char(20), 
+	CPF numeric(11) UNIQUE,
+	cidade varchar(30),
+	nroa integer,
+	PRIMARY KEY(codm)
+);
+ALTER TABLE Medicos ADD constraint FK_Ambulatorios_Medicos
+FOREIGN KEY(nroa) REFERENCES Ambulatorios (nroa);
+
+CREATE TABLE Pacientes (
+	codp integer PRIMARY KEY, 
+	nome varchar(40) NOT NULL,
+    idade smallint NOT NULL,
+	cidade char(30),
+    CPF numeric(11) UNIQUE,
+    doenca varchar(40) NOT NULL
+);
+
+CREATE TABLE Funcionario (
+	codf integer PRIMARY KEY,
+	nome varchar(40) NOT NULL,
+	idade smallint,
+	CPF numeric(11) UNIQUE,
+	cidade varchar(30),
+	salario numeric(10),
+	cargo varchar(20)
+);
+
+CREATE TABLE Consultas(
+	codm integer,
+	codp integer,
+	data date,
+	hora time,
+    PRIMARY KEY(codm, codp, data, hora)
+);
+ALTER TABLE Consultas ADD constraint FK_Medicos_Consultas
+FOREIGN KEY(codm) REFERENCES Medicos (codm);
+ALTER TABLE Consultas ADD constraint FK_Pacientes_Consultas
+FOREIGN KEY(codp) REFERENCES Pacientes (codp);
+ALTER TABLE Funcionario ADD nroa integer;
+ALTER TABLE Funcionario ADD constraint fk_nroa
+FOREIGN KEY(nroa) REFERENCES Ambulatorios (nroa);
+
+-- DML
+INSERT INTO Ambulatorios VALUES (1, 1, 30);
+INSERT INTO Ambulatorios VALUES (2, 1, 50);
+INSERT INTO Ambulatorios VALUES (3, 2, 40);
+INSERT INTO Ambulatorios VALUES (4, 2, 25);
+INSERT INTO Ambulatorios VALUES (5, 2, 50);
+
+INSERT INTO Medicos VALUES (1, 'Joao', 40, 'ortopedia', 10000100000, 'Florianopolis', 1);
+INSERT INTO Medicos VALUES (2, 'Maria', 42, 'traumatologia', 10000110000, 'Blumenau', 2);
+INSERT INTO Medicos VALUES (3, 'Pedro', 51, 'pediatria', 11000100000, 'São José', 2);
+INSERT INTO Medicos VALUES (4, 'Carlos', 28, 'ortopedia', 11000110000, 'Joinville', null);
+INSERT INTO Medicos VALUES (5, 'Marcia', 33, 'neurologia', 11000111000, 'Biguacu', 3);
+
+INSERT INTO Pacientes VALUES (1, 'Ana', 20, 'Florianopolis', 20000200000,'gripe');
+INSERT INTO Pacientes VALUES (2, 'Paulo', 24, 'Palhoca', 20000220000,'fratura');
+INSERT INTO Pacientes VALUES (3, 'Lucia', 30, 'Biguacu', 22000200000, 'tendinite');
+INSERT INTO Pacientes VALUES (4, 'Carlos', 28, 'Joinville', 11000110000, 'sarampo');
+
+INSERT INTO Funcionario VALUES (1, 'Rita', 32, 20000100000, 'Sao Jose', 1200, 'Secretaria', 2);
+INSERT INTO Funcionario VALUES (2, 'Maria', 55, 30000110000, 'Palhoca', 1220, 'Contadora', 4);
+INSERT INTO Funcionario VALUES (3, 'Caio', 45, 41000100000, 'Florianopolis', 1100, 'Analista de Sistemas', 5);
+INSERT INTO Funcionario VALUES (4, 'Carlos', 44, 51000110000, 'Florianopolis', 1200, 'Secretario', 3);
+INSERT INTO Funcionario VALUES (5, 'Paula', 33, 61000111000, 'Florianopolis', 2500, 'Telefonista', 1);
+
+INSERT INTO Consultas VALUES (1, 1, '2006/06/12', '14:00');
+INSERT INTO Consultas VALUES (1, 4, '2006/06/13', '10:00');
+INSERT INTO Consultas VALUES (2, 1, '2006/06/13', '09:00');
+INSERT INTO Consultas VALUES (2, 2, '2006/06/13', '11:00');
+INSERT INTO Consultas VALUES (2, 3, '2006/06/14', '14:00');
+INSERT INTO Consultas VALUES (2, 4, '2006/06/14', '17:00');
+INSERT INTO Consultas VALUES (3, 1, '2006/06/19', '18:00');
+INSERT INTO Consultas VALUES (3, 3, '2006/06/12', '10:00');
+INSERT INTO Consultas VALUES (3, 4, '2006/06/19', '13:00');
+INSERT INTO Consultas VALUES (4, 4, '2006/06/20', '13:00');
+INSERT INTO Consultas VALUES (4, 4, '2006/06/22', '19:30');
